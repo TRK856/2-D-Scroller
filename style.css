@@ -1,7 +1,8 @@
 body {
+    overflow: hidden;
     text-align: center;
-  }
-  
+}
+
 canvas {
-  border: 1px solid grey;
+    border: 1px solid grey;
 }
