@@ -6,19 +6,25 @@ cnv.width = 800;
 cnv.height = 600;
 
 // world set-up
-let world = [{ shape: "rect", x: 200, y: 200, w: 90, h: 30 }]; // objects inside the world
+let world = [];
 
 world.width = 3000;
 world.height = 3000;
 world.center = { x: world.width / 2, y: world.height / 2 }; // center of the world
+world.push({
+    shape: "rect",
+    x: 700,
+    y: 900,
+    w: 90,
+    h: 30,
+}); // objects inside the world
 
 // canvas varible set up
-let canvas;
+let canvas = [];
 
-canvas.location = {
-    x: world.center.x - cnv.width,
-    y: world.center.y - cnv.height,
-}; // canvas top corner location (reletive to the world)
+// canvas top corner location (reletive to the world)
+// prettier-ignore
+canvas.location = { x: world.center.x - cnv.width, y: world.center.y - cnv.height};
 
 // player set-up
 let player = {};
@@ -47,7 +53,37 @@ document.addEventListener("keyup", (e) => {
 // draw
 function drawPOV() {
     ctx.clearRect(0, 0, world.width, world.height);
+    ctx.translate(canvas.location.x, canvas.location.y);
+    drawAllRedirect(world);
     requestAnimationFrame(drawPOV);
+}
+
+function drawAllRedirect(obj) {
+    for (let i = 0; i < obj.length; i++) {
+        if (rectDrawCheck(obj[i]) === true) {
+            if (obj[i].shape === "rect") {
+                drawRect(obj[i]);
+            }
+        }
+    }
+}
+
+function drawRect(obj) {
+    fill("red");
+    rect(obj.x, obj.y, obj.w, obj.h, "fill");
+}
+
+// check if you should draw a rect (if it is in the POV)
+function rectDrawCheck(obj) {
+    let le1 = canvas.location.x;
+    let re1 = canvas.location.x + cnv.width;
+    let te1 = canvas.location.y;
+    let be1 = canvas.location.y + cnv.height;
+    let le2 = obj.x;
+    let re2 = obj.x + obj.w;
+    let te2 = obj.y;
+    let be2 = obj.y + obj.h;
+    return le1 < re2 && re1 > le2 && be1 > te2 && te1 < be2;
 }
 
 // movement
