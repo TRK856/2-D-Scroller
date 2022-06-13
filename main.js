@@ -13,8 +13,8 @@ world.height = 3000;
 world.center = { x: world.width / 2, y: world.height / 2 }; // center of the world
 world.push({
     shape: "rect",
-    x: 700,
-    y: 900,
+    x: world.center.x,
+    y: world.center.y,
     w: 90,
     h: 30,
 }); // objects inside the world
@@ -24,7 +24,7 @@ let canvas = [];
 
 // canvas top corner location (reletive to the world)
 // prettier-ignore
-canvas.location = { x: world.center.x - cnv.width, y: world.center.y - cnv.height};
+canvas.location = { x: world.center.x - (cnv.width/2), y: world.center.y - (cnv.height/2)};
 
 // player set-up
 let player = {};
@@ -53,7 +53,6 @@ document.addEventListener("keyup", (e) => {
 // draw
 function drawPOV() {
     ctx.clearRect(0, 0, world.width, world.height);
-    ctx.translate(canvas.location.x, canvas.location.y);
     drawAllRedirect(world);
     requestAnimationFrame(drawPOV);
 }
@@ -70,7 +69,13 @@ function drawAllRedirect(obj) {
 
 function drawRect(obj) {
     fill("red");
-    rect(obj.x, obj.y, obj.w, obj.h, "fill");
+    rect(
+        obj.x - canvas.location.x,
+        obj.y - canvas.location.y,
+        obj.w,
+        obj.h,
+        "fill"
+    );
 }
 
 // check if you should draw a rect (if it is in the POV)
@@ -89,12 +94,23 @@ function rectDrawCheck(obj) {
 // movement
 function move() {
     if (player.keyhandler.ArrowLeft === true) {
+        canvas.location.x -= 3;
     }
     if (player.keyhandler.ArrowRight === true) {
+        canvas.location.x += 3;
     }
     if (player.keyhandler.ArrowUp === true) {
+        canvas.location.y -= 3;
     }
     if (player.keyhandler.ArrowDown === true) {
+        canvas.location.y += 3;
+    }
+}
+
+// Physics
+function physics() {
+    if (xSpeed != 0) {
+        xSpeed *= friction;
     }
 }
 
